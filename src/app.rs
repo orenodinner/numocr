@@ -4,7 +4,10 @@ use eframe::egui;
 use egui::{Color32, ColorImage, Stroke, TextureHandle};
 use image::DynamicImage;
 
-use crate::ocr::{OcrEngine, OcrItem, OcrOptions, RoiTesseractCliOcrEngine, TesseractCliOcrEngine};
+use crate::ocr::{
+    OcrEngine, OcrItem, OcrOptions, OnnxDigitOcrEngine, RoiTesseractCliOcrEngine,
+    TesseractCliOcrEngine,
+};
 use crate::search::digit_sequence::apply_digit_sequence_search;
 
 pub struct DigitOcrViewerApp {
@@ -19,7 +22,25 @@ pub struct DigitOcrViewerApp {
     zoom: f32,
     ocr_scale: u32,
     psm: u8,
-    use_roi_ocr: bool,
+    engine_mode: OcrEngineMode,
+    onnx_engine: Option<OnnxDigitOcrEngine>,
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+enum OcrEngineMode {
+    OnnxRoi,
+    TesseractRoi,
+    TesseractFull,
+}
+
+impl OcrEngineMode {
+    fn label(self) -> &'static str {
+        match self {
+            Self::OnnxRoi => "ONNX ROI",
+            Self::TesseractRoi => "Tesseract ROI",
+            Self::TesseractFull => "Tesseract full",
+        }
+    }
 }
 
 impl DigitOcrViewerApp {
@@ -34,9 +55,10 @@ impl DigitOcrViewerApp {
             matched_indices: Vec::new(),
             current_match: 0,
             zoom: 1.0,
-            ocr_scale: 2,
-            psm: 11,
-            use_roi_ocr: true,
+            ocr_scale: 1,
+            psm: 6,
+            engine_mode: OcrEngineMode::OnnxRoi,
+            onnx_engine: None,
         }
     }
 
@@ -84,19 +106,36 @@ impl DigitOcrViewerApp {
             return;
         }
 
-        self.status = "Running Tesseract OCR...".to_owned();
-        let engine = TesseractCliOcrEngine;
+        self.status = format!("Running {} OCR...", self.engine_mode.label());
         let options = OcrOptions {
             psm: self.psm,
             scale: self.ocr_scale,
-            use_roi: self.use_roi_ocr,
+            use_roi: matches!(
+                self.engine_mode,
+                OcrEngineMode::OnnxRoi | OcrEngineMode::TesseractRoi
+            ),
         };
 
+        let full_engine = TesseractCliOcrEngine;
         let roi_engine = RoiTesseractCliOcrEngine;
-        let result = if self.use_roi_ocr {
-            roi_engine.recognize(image, &options)
-        } else {
-            engine.recognize(image, &options)
+        let result = match self.engine_mode {
+            OcrEngineMode::OnnxRoi => {
+                if self.onnx_engine.is_none() {
+                    match OnnxDigitOcrEngine::from_default_model() {
+                        Ok(engine) => self.onnx_engine = Some(engine),
+                        Err(err) => {
+                            self.status = format!("{err:#}");
+                            return;
+                        }
+                    }
+                }
+                self.onnx_engine
+                    .as_ref()
+                    .expect("ONNX engine initialized")
+                    .recognize(image, &options)
+            }
+            OcrEngineMode::TesseractRoi => roi_engine.recognize(image, &options),
+            OcrEngineMode::TesseractFull => full_engine.recognize(image, &options),
         };
 
         match result {
@@ -220,7 +259,25 @@ impl DigitOcrViewerApp {
                         ui.selectable_value(&mut self.psm, 11, "11 sparse");
                     });
 
-                ui.checkbox(&mut self.use_roi_ocr, "ROI OCR");
+                egui::ComboBox::from_label("Engine")
+                    .selected_text(self.engine_mode.label())
+                    .show_ui(ui, |ui| {
+                        ui.selectable_value(
+                            &mut self.engine_mode,
+                            OcrEngineMode::OnnxRoi,
+                            "ONNX ROI",
+                        );
+                        ui.selectable_value(
+                            &mut self.engine_mode,
+                            OcrEngineMode::TesseractRoi,
+                            "Tesseract ROI",
+                        );
+                        ui.selectable_value(
+                            &mut self.engine_mode,
+                            OcrEngineMode::TesseractFull,
+                            "Tesseract full",
+                        );
+                    });
 
                 ui.add(egui::Slider::new(&mut self.zoom, 0.25..=6.0).text("Zoom"));
 

@@ -1,0 +1,309 @@
+{
+  "engine": "roi",
+  "psm": 6,
+  "scale": 1,
+  "count": 1200,
+  "hits": 485,
+  "hit_rate": 0.40416667,
+  "recognized_any": 825,
+  "recognized_rate": 0.6875,
+  "elapsed_ms": 162859,
+  "avg_ms_per_image": 135.71584,
+  "template_hit_rate": {
+    "horizontal_dimension": "220/288",
+    "leader_note": "115/295",
+    "table_callout": "81/293",
+    "title_block": "69/324"
+  },
+  "pattern_hit_rate": {
+    "coordinate": "47/132",
+    "date": "54/116",
+    "drawing_no": "54/111",
+    "mass": "60/118",
+    "one_decimal": "52/127",
+    "plain_mm": "59/130",
+    "scale": "29/113",
+    "sheet": "42/122",
+    "tolerance_range": "42/117",
+    "two_decimal": "46/114"
+  },
+  "failures": [
+    {
+      "file": "train/000000.png",
+      "label": "62-8398",
+      "expected": "628398",
+      "recognized": [],
+      "template": "title_block",
+      "label_pattern": "drawing_no"
+    },
+    {
+      "file": "train/000002.png",
+      "label": "60-9238",
+      "expected": "609238",
+      "recognized": [],
+      "template": "leader_note",
+      "label_pattern": "drawing_no"
+    },
+    {
+      "file": "train/000003.png",
+      "label": "5.1",
+      "expected": "51",
+      "recognized": [],
+      "template": "table_callout",
+      "label_pattern": "one_decimal"
+    },
+    {
+      "file": "train/000004.png",
+      "label": "21-3065",
+      "expected": "213065",
+      "recognized": [
+        "6"
+      ],
+      "template": "title_block",
+      "label_pattern": "drawing_no"
+    },
+    {
+      "file": "train/000005.png",
+      "label": "2032/09/24",
+      "expected": "20320924",
+      "recognized": [
+        "124",
+        "132/09/",
+        "\\20:"
+      ],
+      "template": "table_callout",
+      "label_pattern": "date"
+    },
+    {
+      "file": "train/000006.png",
+      "label": "22:121",
+      "expected": "22121",
+      "recognized": [
+        "2248"
+      ],
+      "template": "title_block",
+      "label_pattern": "coordinate"
+    },
+    {
+      "file": "train/000010.png",
+      "label": "1/8",
+      "expected": "18",
+      "recognized": [
+        "4/8"
+      ],
+      "template": "leader_note",
+      "label_pattern": "sheet"
+    },
+    {
+      "file": "train/000012.png",
+      "label": "210",
+      "expected": "210",
+      "recognized": [],
+      "template": "table_callout",
+      "label_pattern": "plain_mm"
+    },
+    {
+      "file": "train/000014.png",
+      "label": "2:2",
+      "expected": "22",
+      "recognized": [],
+      "template": "title_block",
+      "label_pattern": "scale"
+    },
+    {
+      "file": "train/000015.png",
+      "label": "239.92",
+      "expected": "23992",
+      "recognized": [
+        "19.92"
+      ],
+      "template": "table_callout",
+      "label_pattern": "two_decimal"
+    },
+    {
+      "file": "train/000016.png",
+      "label": "91-7653",
+      "expected": "917653",
+      "recognized": [
+        "653",
+        "1:"
+      ],
+      "template": "table_callout",
+      "label_pattern": "drawing_no"
+    },
+    {
+      "file": "train/000018.png",
+      "label": "790",
+      "expected": "790",
+      "recognized": [],
+      "template": "table_callout",
+      "label_pattern": "plain_mm"
+    },
+    {
+      "file": "train/000019.png",
+      "label": "29,019",
+      "expected": "29019",
+      "recognized": [
+        "29,9"
+      ],
+      "template": "title_block",
+      "label_pattern": "mass"
+    },
+    {
+      "file": "train/000021.png",
+      "label": "115.96-06",
+      "expected": "1159606",
+      "recognized": [
+        "06"
+      ],
+      "template": "leader_note",
+      "label_pattern": "tolerance_range"
+    },
+    {
+      "file": "train/000023.png",
+      "label": "83.51-07",
+      "expected": "835107",
+      "recognized": [],
+      "template": "title_block",
+      "label_pattern": "tolerance_range"
+    },
+    {
+      "file": "train/000025.png",
+      "label": "58.98-07",
+      "expected": "589807",
+      "recognized": [],
+      "template": "title_block",
+      "label_pattern": "tolerance_range"
+    },
+    {
+      "file": "train/000026.png",
+      "label": "151.8",
+      "expected": "1518",
+      "recognized": [],
+      "template": "leader_note",
+      "label_pattern": "one_decimal"
+    },
+    {
+      "file": "train/000028.png",
+      "label": "708:544",
+      "expected": "708544",
+      "recognized": [
+        "3"
+      ],
+      "template": "title_block",
+      "label_pattern": "coordinate"
+    },
+    {
+      "file": "train/000029.png",
+      "label": "32.41-01",
+      "expected": "324101",
+      "recognized": [],
+      "template": "title_block",
+      "label_pattern": "tolerance_range"
+    },
+    {
+      "file": "train/000030.png",
+      "label": "154.82",
+      "expected": "15482",
+      "recognized": [],
+      "template": "title_block",
+      "label_pattern": "two_decimal"
+    },
+    {
+      "file": "train/000031.png",
+      "label": "692:732",
+      "expected": "692732",
+      "recognized": [
+        "132",
+        "4"
+      ],
+      "template": "leader_note",
+      "label_pattern": "coordinate"
+    },
+    {
+      "file": "train/000032.png",
+      "label": "369:772",
+      "expected": "369772",
+      "recognized": [],
+      "template": "title_block",
+      "label_pattern": "coordinate"
+    },
+    {
+      "file": "train/000033.png",
+      "label": "191.5",
+      "expected": "1915",
+      "recognized": [],
+      "template": "leader_note",
+      "label_pattern": "one_decimal"
+    },
+    {
+      "file": "train/000035.png",
+      "label": "2027/12/17",
+      "expected": "20271217",
+      "recognized": [
+        "2027",
+        "12"
+      ],
+      "template": "leader_note",
+      "label_pattern": "date"
+    },
+    {
+      "file": "train/000036.png",
+      "label": "58,379",
+      "expected": "58379",
+      "recognized": [
+        "58,",
+        "4"
+      ],
+      "template": "table_callout",
+      "label_pattern": "mass"
+    },
+    {
+      "file": "train/000037.png",
+      "label": "167.68-03",
+      "expected": "1676803",
+      "recognized": [],
+      "template": "title_block",
+      "label_pattern": "tolerance_range"
+    },
+    {
+      "file": "train/000039.png",
+      "label": "85:734",
+      "expected": "85734",
+      "recognized": [
+        "353734",
+        "8"
+      ],
+      "template": "horizontal_dimension",
+      "label_pattern": "coordinate"
+    },
+    {
+      "file": "train/000040.png",
+      "label": "8/2",
+      "expected": "82",
+      "recognized": [
+        "7"
+      ],
+      "template": "table_callout",
+      "label_pattern": "sheet"
+    },
+    {
+      "file": "train/000044.png",
+      "label": "272.41",
+      "expected": "27241",
+      "recognized": [],
+      "template": "title_block",
+      "label_pattern": "two_decimal"
+    },
+    {
+      "file": "train/000046.png",
+      "label": "33,420",
+      "expected": "33420",
+      "recognized": [
+        "0:"
+      ],
+      "template": "title_block",
+      "label_pattern": "mass"
+    }
+  ]
+}

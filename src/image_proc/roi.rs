@@ -34,10 +34,14 @@ impl Component {
 
 pub fn detect_digit_rois(image: &DynamicImage) -> Vec<RoiCandidate> {
     let gray = image.to_luma8();
-    let mut components = connected_components(&gray, 110);
+    let foreground = foreground_without_long_lines(&gray, 175);
+    let mut components = connected_components(&foreground, gray.width(), gray.height());
     components.retain(is_text_like_component);
 
-    let mut rects: Vec<Rect> = components.into_iter().map(|component| component.rect()).collect();
+    let mut rects: Vec<Rect> = components
+        .into_iter()
+        .map(|component| component.rect())
+        .collect();
     rects.sort_by(|a, b| {
         a.center()
             .y
@@ -70,9 +74,64 @@ pub fn detect_digit_rois(image: &DynamicImage) -> Vec<RoiCandidate> {
         .collect()
 }
 
-fn connected_components(gray: &GrayImage, threshold: u8) -> Vec<Component> {
-    let width = gray.width();
-    let height = gray.height();
+fn foreground_without_long_lines(gray: &GrayImage, threshold: u8) -> Vec<bool> {
+    let width = gray.width() as usize;
+    let height = gray.height() as usize;
+    let mut foreground = vec![false; width * height];
+
+    for y in 0..height {
+        for x in 0..width {
+            foreground[y * width + x] = gray.get_pixel(x as u32, y as u32)[0] <= threshold;
+        }
+    }
+
+    let mut line_mask = vec![false; width * height];
+    for y in 0..height {
+        let mut x = 0;
+        while x < width {
+            while x < width && !foreground[y * width + x] {
+                x += 1;
+            }
+            let start = x;
+            while x < width && foreground[y * width + x] {
+                x += 1;
+            }
+            if x - start >= 28 {
+                for run_x in start..x {
+                    line_mask[y * width + run_x] = true;
+                }
+            }
+        }
+    }
+
+    for x in 0..width {
+        let mut y = 0;
+        while y < height {
+            while y < height && !foreground[y * width + x] {
+                y += 1;
+            }
+            let start = y;
+            while y < height && foreground[y * width + x] {
+                y += 1;
+            }
+            if y - start >= 28 {
+                for run_y in start..y {
+                    line_mask[run_y * width + x] = true;
+                }
+            }
+        }
+    }
+
+    for (index, is_line) in line_mask.into_iter().enumerate() {
+        if is_line {
+            foreground[index] = false;
+        }
+    }
+
+    foreground
+}
+
+fn connected_components(foreground: &[bool], width: u32, height: u32) -> Vec<Component> {
     let len = (width as usize).saturating_mul(height as usize);
     let mut visited = vec![false; len];
     let mut components = Vec::new();
@@ -80,7 +139,7 @@ fn connected_components(gray: &GrayImage, threshold: u8) -> Vec<Component> {
     for y in 0..height {
         for x in 0..width {
             let index = (y * width + x) as usize;
-            if visited[index] || gray.get_pixel(x, y)[0] > threshold {
+            if visited[index] || !foreground[index] {
                 continue;
             }
 
@@ -108,7 +167,7 @@ fn connected_components(gray: &GrayImage, threshold: u8) -> Vec<Component> {
                 for ny in y0..=y1 {
                     for nx in x0..=x1 {
                         let next_index = (ny * width + nx) as usize;
-                        if visited[next_index] || gray.get_pixel(nx, ny)[0] > threshold {
+                        if visited[next_index] || !foreground[next_index] {
                             continue;
                         }
                         visited[next_index] = true;
@@ -185,7 +244,13 @@ mod tests {
     fn detects_dark_text_like_blob() {
         let mut image = GrayImage::from_pixel(120, 60, Luma([255]));
         for y in 20..36 {
-            for x in 30..70 {
+            for x in 30..40 {
+                image.put_pixel(x, y, Luma([20]));
+            }
+            for x in 48..58 {
+                image.put_pixel(x, y, Luma([20]));
+            }
+            for x in 66..76 {
                 image.put_pixel(x, y, Luma([20]));
             }
         }
@@ -194,6 +259,6 @@ mod tests {
 
         assert!(!rois.is_empty());
         assert!(rois[0].rect_original.left() <= 30.0);
-        assert!(rois[0].rect_original.right() >= 70.0);
+        assert!(rois[0].rect_original.right() >= 76.0);
     }
 }

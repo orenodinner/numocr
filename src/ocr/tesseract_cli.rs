@@ -1,5 +1,3 @@
-use std::process::Command;
-
 use anyhow::{anyhow, Context, Result};
 use egui::{pos2, Rect};
 use image::DynamicImage;
@@ -8,6 +6,7 @@ use tempfile::Builder;
 use crate::image_proc::preprocess::preprocess_for_ocr;
 use crate::search::digit_sequence::normalize_digits;
 
+use super::tesseract_cmd::new_tesseract_command;
 use super::{OcrEngine, OcrItem, OcrOptions};
 
 pub struct TesseractCliOcrEngine;
@@ -26,7 +25,7 @@ impl OcrEngine for TesseractCliOcrEngine {
             .context("failed to save temporary OCR image")?;
 
         let whitelist = "tessedit_char_whitelist=0123456789.,:-/¥￥";
-        let output = Command::new("tesseract")
+        let output = new_tesseract_command()
             .arg(temp_file.path())
             .arg("stdout")
             .arg("-l")

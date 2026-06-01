@@ -1,0 +1,381 @@
+{
+  "engine": "onnx",
+  "psm": 11,
+  "scale": 2,
+  "count": 1200,
+  "hits": 899,
+  "hit_rate": 0.74916667,
+  "recognized_any": 1170,
+  "recognized_rate": 0.975,
+  "elapsed_ms": 6162,
+  "avg_ms_per_image": 5.135,
+  "template_hit_rate": {
+    "horizontal_dimension": "219/288",
+    "leader_note": "218/295",
+    "table_callout": "244/293",
+    "title_block": "218/324"
+  },
+  "pattern_hit_rate": {
+    "coordinate": "87/132",
+    "date": "67/116",
+    "drawing_no": "82/111",
+    "mass": "87/118",
+    "one_decimal": "100/127",
+    "plain_mm": "113/130",
+    "scale": "96/113",
+    "sheet": "101/122",
+    "tolerance_range": "82/117",
+    "two_decimal": "84/114"
+  },
+  "failures": [
+    {
+      "file": "train/000002.png",
+      "label": "60-9238",
+      "expected": "609238",
+      "recognized": [],
+      "template": "leader_note",
+      "label_pattern": "drawing_no"
+    },
+    {
+      "file": "train/000005.png",
+      "label": "2032/09/24",
+      "expected": "20320924",
+      "recognized": [
+        "0924",
+        "3209",
+        "2",
+        "20",
+        "1",
+        "1"
+      ],
+      "template": "table_callout",
+      "label_pattern": "date"
+    },
+    {
+      "file": "train/000011.png",
+      "label": "66",
+      "expected": "66",
+      "recognized": [
+        "00",
+        "00"
+      ],
+      "template": "leader_note",
+      "label_pattern": "plain_mm"
+    },
+    {
+      "file": "train/000021.png",
+      "label": "115.96-06",
+      "expected": "1159606",
+      "recognized": [
+        "17",
+        "96",
+        "06"
+      ],
+      "template": "leader_note",
+      "label_pattern": "tolerance_range"
+    },
+    {
+      "file": "train/000023.png",
+      "label": "83.51-07",
+      "expected": "835107",
+      "recognized": [
+        "23",
+        "1",
+        "7",
+        "83",
+        "51",
+        "07"
+      ],
+      "template": "title_block",
+      "label_pattern": "tolerance_range"
+    },
+    {
+      "file": "train/000025.png",
+      "label": "58.98-07",
+      "expected": "589807",
+      "recognized": [
+        "36",
+        "7"
+      ],
+      "template": "title_block",
+      "label_pattern": "tolerance_range"
+    },
+    {
+      "file": "train/000027.png",
+      "label": "336",
+      "expected": "336",
+      "recognized": [],
+      "template": "horizontal_dimension",
+      "label_pattern": "plain_mm"
+    },
+    {
+      "file": "train/000028.png",
+      "label": "708:544",
+      "expected": "708544",
+      "recognized": [
+        "1",
+        "1",
+        "1",
+        "1",
+        "1",
+        "8544",
+        "709",
+        "708"
+      ],
+      "template": "title_block",
+      "label_pattern": "coordinate"
+    },
+    {
+      "file": "train/000029.png",
+      "label": "32.41-01",
+      "expected": "324101",
+      "recognized": [],
+      "template": "title_block",
+      "label_pattern": "tolerance_range"
+    },
+    {
+      "file": "train/000032.png",
+      "label": "369:772",
+      "expected": "369772",
+      "recognized": [
+        "9772",
+        "369"
+      ],
+      "template": "title_block",
+      "label_pattern": "coordinate"
+    },
+    {
+      "file": "train/000035.png",
+      "label": "2027/12/17",
+      "expected": "20271217",
+      "recognized": [
+        "271217",
+        "202"
+      ],
+      "template": "leader_note",
+      "label_pattern": "date"
+    },
+    {
+      "file": "train/000038.png",
+      "label": "61,160",
+      "expected": "61160",
+      "recognized": [
+        "61166",
+        "1"
+      ],
+      "template": "table_callout",
+      "label_pattern": "mass"
+    },
+    {
+      "file": "train/000042.png",
+      "label": "682:223",
+      "expected": "682223",
+      "recognized": [
+        "1",
+        "1",
+        "1"
+      ],
+      "template": "horizontal_dimension",
+      "label_pattern": "coordinate"
+    },
+    {
+      "file": "train/000044.png",
+      "label": "272.41",
+      "expected": "27241",
+      "recognized": [
+        "2731",
+        "7231",
+        "27"
+      ],
+      "template": "title_block",
+      "label_pattern": "two_decimal"
+    },
+    {
+      "file": "train/000053.png",
+      "label": "79,089",
+      "expected": "79089",
+      "recognized": [
+        "908",
+        "9",
+        "79"
+      ],
+      "template": "horizontal_dimension",
+      "label_pattern": "mass"
+    },
+    {
+      "file": "train/000055.png",
+      "label": "2025/07/22",
+      "expected": "20250722",
+      "recognized": [
+        "1"
+      ],
+      "template": "horizontal_dimension",
+      "label_pattern": "date"
+    },
+    {
+      "file": "train/000056.png",
+      "label": "5/12",
+      "expected": "512",
+      "recognized": [
+        "52",
+        "1",
+        "1"
+      ],
+      "template": "horizontal_dimension",
+      "label_pattern": "sheet"
+    },
+    {
+      "file": "train/000058.png",
+      "label": "696:322",
+      "expected": "696322",
+      "recognized": [
+        "96322",
+        "69",
+        "2"
+      ],
+      "template": "leader_note",
+      "label_pattern": "coordinate"
+    },
+    {
+      "file": "train/000067.png",
+      "label": "2029/12/07",
+      "expected": "20291207",
+      "recognized": [],
+      "template": "leader_note",
+      "label_pattern": "date"
+    },
+    {
+      "file": "train/000071.png",
+      "label": "1:2",
+      "expected": "12",
+      "recognized": [],
+      "template": "leader_note",
+      "label_pattern": "scale"
+    },
+    {
+      "file": "train/000075.png",
+      "label": "2026/11/08",
+      "expected": "20261108",
+      "recognized": [
+        "08",
+        "00",
+        "11",
+        "2",
+        "7",
+        "0",
+        "117"
+      ],
+      "template": "title_block",
+      "label_pattern": "date"
+    },
+    {
+      "file": "train/000076.png",
+      "label": "705.5",
+      "expected": "7055",
+      "recognized": [
+        "70655",
+        "70699"
+      ],
+      "template": "title_block",
+      "label_pattern": "one_decimal"
+    },
+    {
+      "file": "train/000077.png",
+      "label": "2025/11/03",
+      "expected": "20251103",
+      "recognized": [
+        "2025103",
+        "1",
+        "5",
+        "1",
+        "1"
+      ],
+      "template": "horizontal_dimension",
+      "label_pattern": "date"
+    },
+    {
+      "file": "train/000079.png",
+      "label": "102.3",
+      "expected": "1023",
+      "recognized": [
+        "76",
+        "4023",
+        "11"
+      ],
+      "template": "title_block",
+      "label_pattern": "one_decimal"
+    },
+    {
+      "file": "train/000086.png",
+      "label": "68.56-01",
+      "expected": "685601",
+      "recognized": [
+        "1",
+        "1",
+        "1",
+        "66501"
+      ],
+      "template": "table_callout",
+      "label_pattern": "tolerance_range"
+    },
+    {
+      "file": "train/000089.png",
+      "label": "79-6322",
+      "expected": "796322",
+      "recognized": [],
+      "template": "leader_note",
+      "label_pattern": "drawing_no"
+    },
+    {
+      "file": "train/000091.png",
+      "label": "189.83-08",
+      "expected": "1898308",
+      "recognized": [
+        "0",
+        "5",
+        "1",
+        "1"
+      ],
+      "template": "horizontal_dimension",
+      "label_pattern": "tolerance_range"
+    },
+    {
+      "file": "train/000093.png",
+      "label": "5:50",
+      "expected": "550",
+      "recognized": [
+        "1",
+        "1"
+      ],
+      "template": "horizontal_dimension",
+      "label_pattern": "scale"
+    },
+    {
+      "file": "train/000105.png",
+      "label": "57,905",
+      "expected": "57905",
+      "recognized": [
+        "57",
+        "005",
+        "7",
+        "97"
+      ],
+      "template": "table_callout",
+      "label_pattern": "mass"
+    },
+    {
+      "file": "train/000106.png",
+      "label": "2032/10/17",
+      "expected": "20321017",
+      "recognized": [
+        "21017",
+        "1",
+        "2032",
+        "2032",
+        "1017"
+      ],
+      "template": "title_block",
+      "label_pattern": "date"
+    }
+  ]
+}

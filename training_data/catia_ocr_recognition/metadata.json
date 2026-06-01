@@ -1,0 +1,14 @@
+{
+  "source_dir": "A:\\numocr\\training_data\\catia_2d_digits",
+  "count": 1200,
+  "pad": 8,
+  "height": 48,
+  "max_width": 256,
+  "splits": {
+    "train": 960,
+    "validation": 120,
+    "test": 120
+  },
+  "hf_load_example": "load_dataset('imagefolder', data_dir='training_data/catia_ocr_recognition')",
+  "note": "Use `text` for sequence recognizer labels; `normalized_digits` is useful for digit-only evaluation."
+}

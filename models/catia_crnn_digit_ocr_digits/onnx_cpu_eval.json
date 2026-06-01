@@ -1,0 +1,35 @@
+{
+  "model": "models/catia_crnn_digit_ocr_digits/model.onnx",
+  "provider": "CPUExecutionProvider",
+  "count": 120,
+  "hit": 116,
+  "accuracy": 0.9666666666666667,
+  "elapsed_sec": 0.2032012939453125,
+  "avg_ms": 1.6933441162109375,
+  "failures": [
+    {
+      "file": "images/001110.png",
+      "expected": "15",
+      "pred": "45",
+      "source": "test/001110.png"
+    },
+    {
+      "file": "images/001132.png",
+      "expected": "310",
+      "pred": "30",
+      "source": "test/001132.png"
+    },
+    {
+      "file": "images/001152.png",
+      "expected": "290142",
+      "pred": "290132",
+      "source": "test/001152.png"
+    },
+    {
+      "file": "images/001158.png",
+      "expected": "20300827",
+      "pred": "2300827",
+      "source": "test/001158.png"
+    }
+  ]
+}

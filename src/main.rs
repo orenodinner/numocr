@@ -1,8 +1,3 @@
-mod app;
-mod image_proc;
-mod ocr;
-mod search;
-
 fn main() -> eframe::Result<()> {
     let options = eframe::NativeOptions {
         viewport: egui::ViewportBuilder::default()
@@ -14,6 +9,6 @@ fn main() -> eframe::Result<()> {
     eframe::run_native(
         "Digit OCR Viewer",
         options,
-        Box::new(|cc| Ok(Box::new(app::DigitOcrViewerApp::new(cc)))),
+        Box::new(|cc| Ok(Box::new(digit_ocr_viewer::app::DigitOcrViewerApp::new(cc)))),
     )
 }

@@ -3,7 +3,6 @@ use std::collections::BTreeSet;
 use crate::ocr::OcrItem;
 
 const SAME_LINE_CENTER_Y_THRESHOLD: f32 = 12.0;
-
 pub fn normalize_digits(s: &str) -> String {
     s.chars().filter(|c| c.is_ascii_digit()).collect()
 }
