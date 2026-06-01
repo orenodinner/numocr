@@ -1,0 +1,35 @@
+{
+  "count": 1600,
+  "width": 256,
+  "height": 64,
+  "seed": 20260601,
+  "charset": "0123456789.,:-/¥￥",
+  "surrogate_fonts": true,
+  "fonts": [
+    {
+      "path": "C:\\Windows\\Fonts\\consola.ttf",
+      "source": "windows-surrogate"
+    },
+    {
+      "path": "C:\\Windows\\Fonts\\consolab.ttf",
+      "source": "windows-surrogate"
+    },
+    {
+      "path": "C:\\Windows\\Fonts\\cour.ttf",
+      "source": "windows-surrogate"
+    },
+    {
+      "path": "C:\\Windows\\Fonts\\courbd.ttf",
+      "source": "windows-surrogate"
+    },
+    {
+      "path": "C:\\Windows\\Fonts\\bahnschrift.ttf",
+      "source": "windows-surrogate"
+    },
+    {
+      "path": "C:\\Windows\\Fonts\\arial.ttf",
+      "source": "windows-surrogate"
+    }
+  ],
+  "note": "Use licensed CATIA/CTIS fonts in training_data/fonts for target-specific data."
+}
