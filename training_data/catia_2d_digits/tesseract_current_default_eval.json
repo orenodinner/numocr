@@ -1,0 +1,306 @@
+{
+  "config": {
+    "psm": 11,
+    "scale": 2
+  },
+  "count": 1200,
+  "hits": 420,
+  "hit_rate": 0.35,
+  "recognized_any": 603,
+  "recognized_rate": 0.5025,
+  "elapsed_sec": 192.58,
+  "template_hit_rate": {
+    "horizontal_dimension": "156/288",
+    "leader_note": "54/295",
+    "table_callout": "133/293",
+    "title_block": "77/324"
+  },
+  "template_recognized_rate": {
+    "horizontal_dimension": "180/288",
+    "leader_note": "79/295",
+    "table_callout": "202/293",
+    "title_block": "142/324"
+  },
+  "pattern_hit_rate": {
+    "coordinate": "40/132",
+    "date": "47/116",
+    "drawing_no": "47/111",
+    "mass": "55/118",
+    "one_decimal": "36/127",
+    "plain_mm": "43/130",
+    "scale": "22/113",
+    "sheet": "38/122",
+    "tolerance_range": "50/117",
+    "two_decimal": "42/114"
+  },
+  "failures": [
+    {
+      "file": "train/000000.png",
+      "label": "62-8398",
+      "expected": "628398",
+      "joined": "",
+      "texts": [],
+      "template": "title_block",
+      "pattern": "drawing_no",
+      "error": ""
+    },
+    {
+      "file": "train/000002.png",
+      "label": "60-9238",
+      "expected": "609238",
+      "joined": "",
+      "texts": [],
+      "template": "leader_note",
+      "pattern": "drawing_no",
+      "error": ""
+    },
+    {
+      "file": "train/000004.png",
+      "label": "21-3065",
+      "expected": "213065",
+      "joined": "2130165",
+      "texts": [
+        "2130165"
+      ],
+      "template": "title_block",
+      "pattern": "drawing_no",
+      "error": ""
+    },
+    {
+      "file": "train/000005.png",
+      "label": "2032/09/24",
+      "expected": "20320924",
+      "joined": "203209",
+      "texts": [
+        "2032/09/"
+      ],
+      "template": "table_callout",
+      "pattern": "date",
+      "error": ""
+    },
+    {
+      "file": "train/000006.png",
+      "label": "22:121",
+      "expected": "22121",
+      "joined": "",
+      "texts": [],
+      "template": "title_block",
+      "pattern": "coordinate",
+      "error": ""
+    },
+    {
+      "file": "train/000007.png",
+      "label": "8/8",
+      "expected": "88",
+      "joined": "",
+      "texts": [],
+      "template": "table_callout",
+      "pattern": "sheet",
+      "error": ""
+    },
+    {
+      "file": "train/000009.png",
+      "label": "2026/02/05",
+      "expected": "20260205",
+      "joined": "",
+      "texts": [],
+      "template": "leader_note",
+      "pattern": "date",
+      "error": ""
+    },
+    {
+      "file": "train/000010.png",
+      "label": "1/8",
+      "expected": "18",
+      "joined": "",
+      "texts": [],
+      "template": "leader_note",
+      "pattern": "sheet",
+      "error": ""
+    },
+    {
+      "file": "train/000011.png",
+      "label": "66",
+      "expected": "66",
+      "joined": "",
+      "texts": [],
+      "template": "leader_note",
+      "pattern": "plain_mm",
+      "error": ""
+    },
+    {
+      "file": "train/000012.png",
+      "label": "210",
+      "expected": "210",
+      "joined": "410",
+      "texts": [
+        "410."
+      ],
+      "template": "table_callout",
+      "pattern": "plain_mm",
+      "error": ""
+    },
+    {
+      "file": "train/000013.png",
+      "label": "4/4",
+      "expected": "44",
+      "joined": "",
+      "texts": [],
+      "template": "title_block",
+      "pattern": "sheet",
+      "error": ""
+    },
+    {
+      "file": "train/000014.png",
+      "label": "2:2",
+      "expected": "22",
+      "joined": "",
+      "texts": [],
+      "template": "title_block",
+      "pattern": "scale",
+      "error": ""
+    },
+    {
+      "file": "train/000015.png",
+      "label": "239.92",
+      "expected": "23992",
+      "joined": "",
+      "texts": [],
+      "template": "table_callout",
+      "pattern": "two_decimal",
+      "error": ""
+    },
+    {
+      "file": "train/000018.png",
+      "label": "790",
+      "expected": "790",
+      "joined": "",
+      "texts": [],
+      "template": "table_callout",
+      "pattern": "plain_mm",
+      "error": ""
+    },
+    {
+      "file": "train/000019.png",
+      "label": "29,019",
+      "expected": "29019",
+      "joined": "1529",
+      "texts": [
+        "15",
+        "29"
+      ],
+      "template": "title_block",
+      "pattern": "mass",
+      "error": ""
+    },
+    {
+      "file": "train/000021.png",
+      "label": "115.96-06",
+      "expected": "1159606",
+      "joined": "9606",
+      "texts": [
+        "96-06"
+      ],
+      "template": "leader_note",
+      "pattern": "tolerance_range",
+      "error": ""
+    },
+    {
+      "file": "train/000024.png",
+      "label": "2032/08/10",
+      "expected": "20320810",
+      "joined": "02032",
+      "texts": [
+        "0",
+        "2032/"
+      ],
+      "template": "table_callout",
+      "pattern": "date",
+      "error": ""
+    },
+    {
+      "file": "train/000025.png",
+      "label": "58.98-07",
+      "expected": "589807",
+      "joined": "389807",
+      "texts": [
+        "38.98-07"
+      ],
+      "template": "title_block",
+      "pattern": "tolerance_range",
+      "error": ""
+    },
+    {
+      "file": "train/000026.png",
+      "label": "151.8",
+      "expected": "1518",
+      "joined": "",
+      "texts": [],
+      "template": "leader_note",
+      "pattern": "one_decimal",
+      "error": ""
+    },
+    {
+      "file": "train/000027.png",
+      "label": "336",
+      "expected": "336",
+      "joined": "",
+      "texts": [],
+      "template": "horizontal_dimension",
+      "pattern": "plain_mm",
+      "error": ""
+    },
+    {
+      "file": "train/000028.png",
+      "label": "708:544",
+      "expected": "708544",
+      "joined": "",
+      "texts": [],
+      "template": "title_block",
+      "pattern": "coordinate",
+      "error": ""
+    },
+    {
+      "file": "train/000029.png",
+      "label": "32.41-01",
+      "expected": "324101",
+      "joined": "32411",
+      "texts": [
+        "3241-1"
+      ],
+      "template": "title_block",
+      "pattern": "tolerance_range",
+      "error": ""
+    },
+    {
+      "file": "train/000030.png",
+      "label": "154.82",
+      "expected": "15482",
+      "joined": "",
+      "texts": [],
+      "template": "title_block",
+      "pattern": "two_decimal",
+      "error": ""
+    },
+    {
+      "file": "train/000031.png",
+      "label": "692:732",
+      "expected": "692732",
+      "joined": "",
+      "texts": [],
+      "template": "leader_note",
+      "pattern": "coordinate",
+      "error": ""
+    },
+    {
+      "file": "train/000032.png",
+      "label": "369:772",
+      "expected": "369772",
+      "joined": "",
+      "texts": [],
+      "template": "title_block",
+      "pattern": "coordinate",
+      "error": ""
+    }
+  ]
+}

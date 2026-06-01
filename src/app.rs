@@ -4,7 +4,7 @@ use eframe::egui;
 use egui::{Color32, ColorImage, Stroke, TextureHandle};
 use image::DynamicImage;
 
-use crate::ocr::{OcrEngine, OcrItem, OcrOptions, TesseractCliOcrEngine};
+use crate::ocr::{OcrEngine, OcrItem, OcrOptions, RoiTesseractCliOcrEngine, TesseractCliOcrEngine};
 use crate::search::digit_sequence::apply_digit_sequence_search;
 
 pub struct DigitOcrViewerApp {
@@ -19,6 +19,7 @@ pub struct DigitOcrViewerApp {
     zoom: f32,
     ocr_scale: u32,
     psm: u8,
+    use_roi_ocr: bool,
 }
 
 impl DigitOcrViewerApp {
@@ -35,6 +36,7 @@ impl DigitOcrViewerApp {
             zoom: 1.0,
             ocr_scale: 2,
             psm: 11,
+            use_roi_ocr: true,
         }
     }
 
@@ -87,9 +89,17 @@ impl DigitOcrViewerApp {
         let options = OcrOptions {
             psm: self.psm,
             scale: self.ocr_scale,
+            use_roi: self.use_roi_ocr,
         };
 
-        match engine.recognize(image, &options) {
+        let roi_engine = RoiTesseractCliOcrEngine;
+        let result = if self.use_roi_ocr {
+            roi_engine.recognize(image, &options)
+        } else {
+            engine.recognize(image, &options)
+        };
+
+        match result {
             Ok(mut items) => {
                 if items.is_empty() {
                     self.ocr_items = items;
@@ -209,6 +219,8 @@ impl DigitOcrViewerApp {
                         ui.selectable_value(&mut self.psm, 7, "7 line");
                         ui.selectable_value(&mut self.psm, 11, "11 sparse");
                     });
+
+                ui.checkbox(&mut self.use_roi_ocr, "ROI OCR");
 
                 ui.add(egui::Slider::new(&mut self.zoom, 0.25..=6.0).text("Zoom"));
 

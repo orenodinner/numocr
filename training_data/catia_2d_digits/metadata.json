@@ -1,0 +1,63 @@
+{
+  "name": "catia_2d_digits",
+  "description": "Synthetic CATIA-like 2D drawing patches for digit OCR training.",
+  "count": 1200,
+  "width": 384,
+  "height": 192,
+  "seed": 20260602,
+  "charset": "0123456789.,:-/¥￥",
+  "surrogate_fonts": true,
+  "templates": [
+    "horizontal_dimension",
+    "leader_note",
+    "title_block",
+    "table_callout"
+  ],
+  "label_patterns": [
+    "plain_mm",
+    "two_decimal",
+    "one_decimal",
+    "tolerance_range",
+    "coordinate",
+    "drawing_no",
+    "date",
+    "sheet",
+    "mass",
+    "scale"
+  ],
+  "fonts": [
+    {
+      "path": "C:\\Windows\\Fonts\\arial.ttf",
+      "source": "windows-surrogate"
+    },
+    {
+      "path": "C:\\Windows\\Fonts\\arialbd.ttf",
+      "source": "windows-surrogate"
+    },
+    {
+      "path": "C:\\Windows\\Fonts\\consola.ttf",
+      "source": "windows-surrogate"
+    },
+    {
+      "path": "C:\\Windows\\Fonts\\consolab.ttf",
+      "source": "windows-surrogate"
+    },
+    {
+      "path": "C:\\Windows\\Fonts\\cour.ttf",
+      "source": "windows-surrogate"
+    },
+    {
+      "path": "C:\\Windows\\Fonts\\courbd.ttf",
+      "source": "windows-surrogate"
+    },
+    {
+      "path": "C:\\Windows\\Fonts\\segoeui.ttf",
+      "source": "windows-surrogate"
+    },
+    {
+      "path": "C:\\Windows\\Fonts\\bahnschrift.ttf",
+      "source": "windows-surrogate"
+    }
+  ],
+  "note": "These are deterministic synthetic drawings. Add licensed CATIA/CTIS-like fonts to training_data/fonts for closer target-domain typography."
+}

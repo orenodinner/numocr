@@ -16,6 +16,7 @@ pub struct OcrItem {
 pub struct OcrOptions {
     pub psm: u8,
     pub scale: u32,
+    pub use_roi: bool,
 }
 
 pub trait OcrEngine {

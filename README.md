@@ -90,3 +90,21 @@ python tools\generate_digit_dataset.py --font-path "C:\path\to\CTIS.ttf" --count
 ```
 
 If no custom font is available, the generator uses local Windows fonts as surrogate data and records that in `training_data\ctis_digits\metadata.json`.
+
+## CATIA-like 2D Drawing Training Data
+
+Generate deterministic CATIA-like 2D drawing patches with dimension lines, leaders, title blocks, table cells, centerlines, light grid lines, and scan-style noise:
+
+```powershell
+python tools\generate_catia_2d_dataset.py --count 1200 --clean
+```
+
+The default output is `training_data\catia_2d_digits`:
+
+- `train`, `val`, `test`: generated PNG samples
+- `labels.csv`: file path, label, normalized digit string, template, bbox, font, and split
+- `metadata.json`: generation settings, templates, font sources, and charset
+- `preview_grid.png`: quick visual contact sheet
+- `charset.txt`: `<blank>` plus supported OCR characters
+
+The current generated dataset contains 1,200 images split as 960 train, 120 val, and 120 test. It uses Windows surrogate fonts unless licensed CATIA/CTIS-like fonts are placed in `training_data\fonts` or passed with `--font-path`.
