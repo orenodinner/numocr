@@ -18,10 +18,10 @@ Rust desktop app for searching digit sequences inside one image. The default pat
 
 ## Windows Setup
 
-For the GitHub release package, extract `numocr-windows-x64-installer.zip` and run:
+For the GitHub release package, download and run:
 
 ```powershell
-powershell -ExecutionPolicy Bypass -File .\install.ps1
+.\numocr-windows-x64-installer.exe
 ```
 
 This installs the app under `%LOCALAPPDATA%\NumOCR` with the bundled ONNX model.

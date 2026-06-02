@@ -1,9 +1,9 @@
-# NumOCR Windows Installer Package
+# NumOCR Windows Installer
 
-Run the installer from PowerShell:
+The GitHub release ships `numocr-windows-x64-installer.exe`. Run it directly:
 
 ```powershell
-powershell -ExecutionPolicy Bypass -File .\install.ps1
+.\numocr-windows-x64-installer.exe
 ```
 
 The installer copies NumOCR to `%LOCALAPPDATA%\NumOCR` and creates Start Menu and desktop shortcuts.
