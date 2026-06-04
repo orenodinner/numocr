@@ -1,6 +1,12 @@
 use egui::{pos2, Rect};
 use image::{DynamicImage, GrayImage};
 
+const MAX_ANALYSIS_PIXELS: u64 = 4_000_000;
+const MAX_ANALYSIS_SIDE: u32 = 2400;
+const MAX_ROI_CANDIDATES: usize = 768;
+const MIN_LINE_RUN: usize = 8;
+const BASE_LINE_RUN: f32 = 28.0;
+
 #[derive(Debug, Clone)]
 pub struct RoiCandidate {
     pub rect_original: Rect,
@@ -33,8 +39,15 @@ impl Component {
 }
 
 pub fn detect_digit_rois(image: &DynamicImage) -> Vec<RoiCandidate> {
-    let gray = image.to_luma8();
-    let foreground = foreground_without_long_lines(&gray, 175);
+    if image.width() == 0 || image.height() == 0 {
+        return Vec::new();
+    }
+
+    let (gray, scale_x, scale_y, analysis_scale) = analysis_gray(image);
+    let line_run = (BASE_LINE_RUN * analysis_scale)
+        .round()
+        .max(MIN_LINE_RUN as f32) as usize;
+    let foreground = foreground_without_long_lines(&gray, 175, line_run);
     let mut components = connected_components(&foreground, gray.width(), gray.height());
     components.retain(is_text_like_component);
 
@@ -68,13 +81,56 @@ pub fn detect_digit_rois(image: &DynamicImage) -> Vec<RoiCandidate> {
 
     groups
         .into_iter()
-        .map(|rect| pad_and_clamp(rect, gray.width(), gray.height(), 8.0))
+        .take(MAX_ROI_CANDIDATES)
+        .map(|rect| scale_rect_to_original(rect, scale_x, scale_y))
+        .map(|rect| pad_and_clamp(rect, image.width(), image.height(), 8.0))
         .filter(|rect| rect.width() >= 8.0 && rect.height() >= 8.0)
         .map(|rect_original| RoiCandidate { rect_original })
         .collect()
 }
 
-fn foreground_without_long_lines(gray: &GrayImage, threshold: u8) -> Vec<bool> {
+fn analysis_gray(image: &DynamicImage) -> (GrayImage, f32, f32, f32) {
+    let original_width = image.width();
+    let original_height = image.height();
+    let original_pixels = original_width as u64 * original_height as u64;
+    let pixel_scale = if original_pixels > MAX_ANALYSIS_PIXELS {
+        (MAX_ANALYSIS_PIXELS as f32 / original_pixels as f32).sqrt()
+    } else {
+        1.0
+    };
+    let side_scale = if original_width.max(original_height) > MAX_ANALYSIS_SIDE {
+        MAX_ANALYSIS_SIDE as f32 / original_width.max(original_height) as f32
+    } else {
+        1.0
+    };
+    let analysis_scale = pixel_scale.min(side_scale).min(1.0);
+
+    if analysis_scale >= 0.999 {
+        return (image.to_luma8(), 1.0, 1.0, 1.0);
+    }
+
+    let analysis_width = ((original_width as f32 * analysis_scale).round() as u32).max(1);
+    let analysis_height = ((original_height as f32 * analysis_scale).round() as u32).max(1);
+    let gray = image.to_luma8();
+    let resized = image::imageops::resize(
+        &gray,
+        analysis_width,
+        analysis_height,
+        image::imageops::FilterType::Triangle,
+    );
+    (
+        resized,
+        original_width as f32 / analysis_width as f32,
+        original_height as f32 / analysis_height as f32,
+        analysis_scale,
+    )
+}
+
+fn foreground_without_long_lines(
+    gray: &GrayImage,
+    threshold: u8,
+    line_run_threshold: usize,
+) -> Vec<bool> {
     let width = gray.width() as usize;
     let height = gray.height() as usize;
     let mut foreground = vec![false; width * height];
@@ -96,7 +152,7 @@ fn foreground_without_long_lines(gray: &GrayImage, threshold: u8) -> Vec<bool> {
             while x < width && foreground[y * width + x] {
                 x += 1;
             }
-            if x - start >= 28 {
+            if x - start >= line_run_threshold {
                 for run_x in start..x {
                     line_mask[y * width + run_x] = true;
                 }
@@ -114,7 +170,7 @@ fn foreground_without_long_lines(gray: &GrayImage, threshold: u8) -> Vec<bool> {
             while y < height && foreground[y * width + x] {
                 y += 1;
             }
-            if y - start >= 28 {
+            if y - start >= line_run_threshold {
                 for run_y in start..y {
                     line_mask[run_y * width + x] = true;
                 }
@@ -129,6 +185,13 @@ fn foreground_without_long_lines(gray: &GrayImage, threshold: u8) -> Vec<bool> {
     }
 
     foreground
+}
+
+fn scale_rect_to_original(rect: Rect, scale_x: f32, scale_y: f32) -> Rect {
+    Rect::from_min_max(
+        pos2(rect.left() * scale_x, rect.top() * scale_y),
+        pos2(rect.right() * scale_x, rect.bottom() * scale_y),
+    )
 }
 
 fn connected_components(foreground: &[bool], width: u32, height: u32) -> Vec<Component> {
@@ -260,5 +323,29 @@ mod tests {
         assert!(!rois.is_empty());
         assert!(rois[0].rect_original.left() <= 30.0);
         assert!(rois[0].rect_original.right() >= 76.0);
+    }
+
+    #[test]
+    fn ignores_empty_images() {
+        let image = GrayImage::new(0, 0);
+        let rois = detect_digit_rois(&DynamicImage::ImageLuma8(image));
+
+        assert!(rois.is_empty());
+    }
+
+    #[test]
+    fn caps_large_noisy_images() {
+        let mut image = GrayImage::from_pixel(2600, 1800, Luma([255]));
+        for y in (20..1780).step_by(37) {
+            for x in (20..2580).step_by(41) {
+                image.put_pixel(x, y, Luma([20]));
+                image.put_pixel((x + 1).min(2599), y, Luma([20]));
+                image.put_pixel(x, (y + 1).min(1799), Luma([20]));
+            }
+        }
+
+        let rois = detect_digit_rois(&DynamicImage::ImageLuma8(image));
+
+        assert!(rois.len() <= super::MAX_ROI_CANDIDATES);
     }
 }

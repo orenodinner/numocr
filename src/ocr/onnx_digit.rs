@@ -14,6 +14,7 @@ use super::{OcrEngine, OcrItem, OcrOptions};
 const CHARSET: &[u8] = b"0123456789";
 const MODEL_HEIGHT: u32 = 48;
 const MAX_MODEL_WIDTH: u32 = 256;
+const MAX_ONNX_ROIS: usize = 512;
 
 pub struct OnnxDigitOcrEngine {
     session: Mutex<Session>,
@@ -65,8 +66,10 @@ impl OcrEngine for OnnxDigitOcrEngine {
         let rois = detect_digit_rois(image);
         let mut items = Vec::new();
 
-        for roi in rois {
-            let rect = clamp_rect(roi.rect_original, image.width(), image.height());
+        for roi in rois.into_iter().take(MAX_ONNX_ROIS) {
+            let Some(rect) = clamp_rect(roi.rect_original, image.width(), image.height()) else {
+                continue;
+            };
             let crop = crop_rect(image, rect);
             let text = self.recognize_crop(&crop)?;
             if text.is_empty() {
@@ -111,22 +114,38 @@ fn default_model_path() -> Result<PathBuf> {
 }
 
 fn crop_rect(image: &DynamicImage, rect: Rect) -> DynamicImage {
-    image.crop_imm(
-        rect.left().floor().max(0.0) as u32,
-        rect.top().floor().max(0.0) as u32,
-        rect.width().ceil().max(1.0) as u32,
-        rect.height().ceil().max(1.0) as u32,
-    )
+    let x = rect.left().floor().max(0.0) as u32;
+    let y = rect.top().floor().max(0.0) as u32;
+    let right = rect
+        .right()
+        .ceil()
+        .min(image.width() as f32)
+        .max(x as f32 + 1.0) as u32;
+    let bottom = rect
+        .bottom()
+        .ceil()
+        .min(image.height() as f32)
+        .max(y as f32 + 1.0) as u32;
+    image.crop_imm(x, y, right - x, bottom - y)
 }
 
-fn clamp_rect(rect: Rect, image_width: u32, image_height: u32) -> Rect {
-    Rect::from_min_max(
-        egui::pos2(rect.left().max(0.0), rect.top().max(0.0)),
-        egui::pos2(
-            rect.right().min(image_width as f32),
-            rect.bottom().min(image_height as f32),
-        ),
-    )
+fn clamp_rect(rect: Rect, image_width: u32, image_height: u32) -> Option<Rect> {
+    if image_width == 0 || image_height == 0 {
+        return None;
+    }
+
+    let left = rect.left().clamp(0.0, image_width.saturating_sub(1) as f32);
+    let top = rect.top().clamp(0.0, image_height.saturating_sub(1) as f32);
+    let right = rect.right().clamp(left + 1.0, image_width as f32);
+    let bottom = rect.bottom().clamp(top + 1.0, image_height as f32);
+    if right <= left || bottom <= top {
+        return None;
+    }
+
+    Some(Rect::from_min_max(
+        egui::pos2(left, top),
+        egui::pos2(right, bottom),
+    ))
 }
 
 fn crop_to_tensor(crop: &DynamicImage) -> Array4<f32> {
@@ -214,5 +233,16 @@ mod tests {
         logits[33 + 3] = 7.0;
 
         assert_eq!(decode_logits(&shape, &logits).unwrap(), "12");
+    }
+
+    #[test]
+    fn clamps_out_of_bounds_rects() {
+        let rect = egui::Rect::from_min_max(egui::pos2(-5.0, 2.0), egui::pos2(200.0, 80.0));
+        let clamped = super::clamp_rect(rect, 100, 50).unwrap();
+
+        assert_eq!(clamped.left(), 0.0);
+        assert_eq!(clamped.top(), 2.0);
+        assert_eq!(clamped.right(), 100.0);
+        assert_eq!(clamped.bottom(), 50.0);
     }
 }

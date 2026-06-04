@@ -1,3 +1,4 @@
+use std::panic::{catch_unwind, AssertUnwindSafe};
 use std::path::PathBuf;
 
 use eframe::egui;
@@ -118,16 +119,10 @@ impl DigitOcrViewerApp {
 
         let full_engine = TesseractCliOcrEngine;
         let roi_engine = RoiTesseractCliOcrEngine;
-        let result = match self.engine_mode {
+        let result = catch_unwind(AssertUnwindSafe(|| match self.engine_mode {
             OcrEngineMode::OnnxRoi => {
                 if self.onnx_engine.is_none() {
-                    match OnnxDigitOcrEngine::from_default_model() {
-                        Ok(engine) => self.onnx_engine = Some(engine),
-                        Err(err) => {
-                            self.status = format!("{err:#}");
-                            return;
-                        }
-                    }
+                    self.onnx_engine = Some(OnnxDigitOcrEngine::from_default_model()?);
                 }
                 self.onnx_engine
                     .as_ref()
@@ -136,7 +131,8 @@ impl DigitOcrViewerApp {
             }
             OcrEngineMode::TesseractRoi => roi_engine.recognize(image, &options),
             OcrEngineMode::TesseractFull => full_engine.recognize(image, &options),
-        };
+        }))
+        .unwrap_or_else(|_| Err(anyhow::anyhow!("OCR failed because of an internal panic.")));
 
         match result {
             Ok(mut items) => {
