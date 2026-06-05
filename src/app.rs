@@ -1,3 +1,4 @@
+use std::borrow::Cow;
 use std::panic::{catch_unwind, AssertUnwindSafe};
 use std::path::PathBuf;
 
@@ -10,6 +11,9 @@ use crate::ocr::{
     TesseractCliOcrEngine,
 };
 use crate::search::digit_sequence::apply_digit_sequence_search;
+
+const OCR_MAX_WIDTH: u32 = 1920;
+const OCR_MAX_HEIGHT: u32 = 1080;
 
 pub struct DigitOcrViewerApp {
     image_path: Option<PathBuf>,
@@ -116,6 +120,8 @@ impl DigitOcrViewerApp {
                 OcrEngineMode::OnnxRoi | OcrEngineMode::TesseractRoi
             ),
         };
+        let prepared_image = prepare_image_for_ocr(image);
+        let ocr_image = prepared_image.image.as_ref();
 
         let full_engine = TesseractCliOcrEngine;
         let roi_engine = RoiTesseractCliOcrEngine;
@@ -127,20 +133,31 @@ impl DigitOcrViewerApp {
                 self.onnx_engine
                     .as_ref()
                     .expect("ONNX engine initialized")
-                    .recognize(image, &options)
+                    .recognize(ocr_image, &options)
             }
-            OcrEngineMode::TesseractRoi => roi_engine.recognize(image, &options),
-            OcrEngineMode::TesseractFull => full_engine.recognize(image, &options),
+            OcrEngineMode::TesseractRoi => roi_engine.recognize(ocr_image, &options),
+            OcrEngineMode::TesseractFull => full_engine.recognize(ocr_image, &options),
         }))
         .unwrap_or_else(|_| Err(anyhow::anyhow!("OCR failed because of an internal panic.")));
 
         match result {
             Ok(mut items) => {
+                scale_ocr_items_to_original(
+                    &mut items,
+                    prepared_image.scale_x,
+                    prepared_image.scale_y,
+                );
+                let resize_status = prepared_image
+                    .resized_to
+                    .map(|(width, height)| format!(" Downscaled to {width}x{height} for OCR."))
+                    .unwrap_or_default();
+
                 if items.is_empty() {
                     self.ocr_items = items;
                     self.matched_indices.clear();
                     self.current_match = 0;
-                    self.status = "OCR finished, but no digit text was found.".to_owned();
+                    self.status =
+                        format!("OCR finished, but no digit text was found.{resize_status}");
                     return;
                 }
 
@@ -151,10 +168,12 @@ impl DigitOcrViewerApp {
                 self.ocr_items = items;
 
                 if match_count == 0 {
-                    self.status = format!("OCR found {item_count} digit items. No matches.");
-                } else {
                     self.status =
-                        format!("OCR found {item_count} digit items. {match_count} matches.");
+                        format!("OCR found {item_count} digit items. No matches.{resize_status}");
+                } else {
+                    self.status = format!(
+                        "OCR found {item_count} digit items. {match_count} matches.{resize_status}"
+                    );
                 }
             }
             Err(err) => {
@@ -372,6 +391,63 @@ impl eframe::App for DigitOcrViewerApp {
     }
 }
 
+struct PreparedOcrImage<'a> {
+    image: Cow<'a, DynamicImage>,
+    scale_x: f32,
+    scale_y: f32,
+    resized_to: Option<(u32, u32)>,
+}
+
+fn prepare_image_for_ocr(image: &DynamicImage) -> PreparedOcrImage<'_> {
+    let width = image.width();
+    let height = image.height();
+    if width <= OCR_MAX_WIDTH && height <= OCR_MAX_HEIGHT {
+        return PreparedOcrImage {
+            image: Cow::Borrowed(image),
+            scale_x: 1.0,
+            scale_y: 1.0,
+            resized_to: None,
+        };
+    }
+
+    let scale = (OCR_MAX_WIDTH as f32 / width.max(1) as f32)
+        .min(OCR_MAX_HEIGHT as f32 / height.max(1) as f32)
+        .min(1.0);
+    let resized_width = ((width as f32 * scale).round() as u32).max(1);
+    let resized_height = ((height as f32 * scale).round() as u32).max(1);
+    let resized = image.resize(
+        resized_width,
+        resized_height,
+        image::imageops::FilterType::Triangle,
+    );
+
+    PreparedOcrImage {
+        image: Cow::Owned(resized),
+        scale_x: width as f32 / resized_width as f32,
+        scale_y: height as f32 / resized_height as f32,
+        resized_to: Some((resized_width, resized_height)),
+    }
+}
+
+fn scale_ocr_items_to_original(items: &mut [OcrItem], scale_x: f32, scale_y: f32) {
+    if (scale_x - 1.0).abs() < f32::EPSILON && (scale_y - 1.0).abs() < f32::EPSILON {
+        return;
+    }
+
+    for item in items {
+        item.rect_original = egui::Rect::from_min_max(
+            egui::pos2(
+                item.rect_original.left() * scale_x,
+                item.rect_original.top() * scale_y,
+            ),
+            egui::pos2(
+                item.rect_original.right() * scale_x,
+                item.rect_original.bottom() * scale_y,
+            ),
+        );
+    }
+}
+
 fn dynamic_image_to_color_image(image: &DynamicImage) -> anyhow::Result<ColorImage> {
     let rgba = image.to_rgba8();
     let width = usize::try_from(rgba.width())?;
@@ -380,4 +456,35 @@ fn dynamic_image_to_color_image(image: &DynamicImage) -> anyhow::Result<ColorIma
         [width, height],
         rgba.as_raw(),
     ))
+}
+
+#[cfg(test)]
+mod tests {
+    use image::{DynamicImage, RgbaImage};
+
+    use super::{prepare_image_for_ocr, OCR_MAX_HEIGHT, OCR_MAX_WIDTH};
+
+    #[test]
+    fn keeps_full_hd_or_smaller_ocr_images_unscaled() {
+        let image = DynamicImage::ImageRgba8(RgbaImage::new(OCR_MAX_WIDTH, OCR_MAX_HEIGHT));
+        let prepared = prepare_image_for_ocr(&image);
+
+        assert!(prepared.resized_to.is_none());
+        assert_eq!(prepared.image.width(), OCR_MAX_WIDTH);
+        assert_eq!(prepared.image.height(), OCR_MAX_HEIGHT);
+        assert_eq!(prepared.scale_x, 1.0);
+        assert_eq!(prepared.scale_y, 1.0);
+    }
+
+    #[test]
+    fn shrinks_large_ocr_images_to_full_hd_bounds() {
+        let image = DynamicImage::ImageRgba8(RgbaImage::new(4000, 3000));
+        let prepared = prepare_image_for_ocr(&image);
+
+        assert_eq!(prepared.resized_to, Some((1440, OCR_MAX_HEIGHT)));
+        assert!(prepared.image.width() <= OCR_MAX_WIDTH);
+        assert!(prepared.image.height() <= OCR_MAX_HEIGHT);
+        assert!((prepared.scale_x - 4000.0 / 1440.0).abs() < 0.001);
+        assert!((prepared.scale_y - 3000.0 / OCR_MAX_HEIGHT as f32).abs() < 0.001);
+    }
 }

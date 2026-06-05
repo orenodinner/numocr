@@ -9,6 +9,7 @@ Rust desktop app for searching digit sequences inside one image. The default pat
 - Run ONNX ROI OCR, Tesseract ROI OCR, or whole-image Tesseract OCR
 - Selectable Tesseract PSM 6, 7, or 11 for Tesseract modes
 - ROI mode that extracts likely digit regions before recognition
+- Downscale large input images to fit a 1920x1080 OCR canvas, then map result boxes back to the original image
 - Preprocess OCR input with grayscale conversion and 1x to 4x scaling
 - Search digit sequences such as `235` or `20260601`
 - Match split OCR output such as `2 3 5` when searching `235`
